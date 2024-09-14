@@ -10,6 +10,7 @@ import (
 
 type Database interface {
 	Connect(driver, connStr string) error
+	Ping() error
 	Close() error
 
 	AnalyzeSchema(tableName string) (*AnalyzeResult, error)
@@ -26,7 +27,7 @@ func (r *AnalyzeResult) String() string {
 func NewDatabase(driver string) (Database, error) {
 	switch driver {
 	case "mysql":
-		return NewMySQLDatabase(), nil
+		return &MySQLDatabase{}, nil
 	case "postgres":
 		return nil, fmt.Errorf("Postgres not implemented yet")
 		// return &PostgresDatabase{}, nil

@@ -18,7 +18,9 @@ var startCmd = &cobra.Command{
 		driver, _ := cmd.Flags().GetString("driver")
 		connStr := getConnStr(cmd)
 
-		database, err := db.NewDatabase(driver)
+		handleConnect(driver, connStr)
+		var err error
+		database, err = db.NewDatabase(driver)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -28,6 +30,7 @@ var startCmd = &cobra.Command{
 			fmt.Println("Error connecting to the database:", err)
 			return
 		}
+
 		fmt.Println("Connected to the database successfully!")
 
 		StartInteractiveShell()
@@ -66,5 +69,4 @@ func StartInteractiveShell() {
 			fmt.Println("Unknown command:", command[0])
 		}
 	}
-
 }
