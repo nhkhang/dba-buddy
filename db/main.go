@@ -6,6 +6,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"github.com/nhkhang/dba-buddy/ai"
+	"github.com/nhkhang/dba-buddy/db/mysql"
 )
 
 type Database interface {
@@ -13,7 +15,7 @@ type Database interface {
 	Ping() error
 	Close() error
 
-	AnalyzeSchema(tableName string) (*AnalyzeResult, error)
+	AnalyzeSchema(tableName string) error
 }
 
 type AnalyzeResult struct {
@@ -24,10 +26,10 @@ func (r *AnalyzeResult) String() string {
 	return fmt.Sprintf("Is optimized: %v", r.IsOptimized)
 }
 
-func NewDatabase(driver string) (Database, error) {
+func NewDatabase(driver string, connStr string, agent *ai.OllamaClient) (Database, error) {
 	switch driver {
 	case "mysql":
-		return &MySQLDatabase{}, nil
+		return mysql.NewMySQLDatabase(driver, connStr, agent)
 	case "postgres":
 		return nil, fmt.Errorf("Postgres not implemented yet")
 		// return &PostgresDatabase{}, nil

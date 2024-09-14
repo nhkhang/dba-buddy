@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/nhkhang/dba-buddy/db"
 	"github.com/spf13/cobra"
 )
 
@@ -66,17 +65,10 @@ var analyzeSchemaCmd = &cobra.Command{
 		driver, _ := cmd.Flags().GetString("driver")
 		connStr := getConnStr(cmd)
 
-		database, err := db.NewDatabase(driver)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		if err := database.Connect(driver, connStr); err != nil {
+		if err := handleConnect(driver, connStr); err != nil {
 			fmt.Println("Error connecting to the database:", err)
 			return
 		}
-		fmt.Println("Connected to the database successfully!")
 
 		// Analyze schema
 		handleAnalyzeSchema(args[0])

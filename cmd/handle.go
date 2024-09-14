@@ -3,26 +3,25 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/nhkhang/dba-buddy/ai"
 	"github.com/nhkhang/dba-buddy/db"
 )
 
+type ConnectionConfig struct {
+	Driver      string
+	DBConnStr   string
+	AIAgentHost string
+}
+
 func handleConnect(driver, connStr string) error {
-	var err error
-	database, err = db.NewDatabase(driver)
+	// Map AI Agent
+	agent, err := ai.NewOllamaClient()
 	if err != nil {
 		return err
 	}
 
-	if err := database.Connect(driver, connStr); err != nil {
-		return err
-	}
-	defer func() {
-		if err := database.Close(); err != nil {
-			fmt.Println("Error closing database connection:", err)
-		}
-	}()
-
-	if err = database.Ping(); err != nil {
+	database, err = db.NewDatabase(driver, connStr, agent)
+	if err != nil {
 		return err
 	}
 
@@ -37,10 +36,8 @@ func handleAnalyzeSchema(tableName string) {
 		return
 	}
 
-	result, err := database.AnalyzeSchema(tableName)
+	err := database.AnalyzeSchema(tableName)
 	if err != nil {
 		fmt.Println("Error analyzing schema for table", tableName, ":", err)
 	}
-
-	fmt.Printf("Schema analysis for table %s: %s \n", tableName, result.String())
 }

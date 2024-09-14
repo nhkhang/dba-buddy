@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nhkhang/dba-buddy/db"
 	"github.com/spf13/cobra"
 )
 
@@ -19,19 +18,6 @@ var startCmd = &cobra.Command{
 		connStr := getConnStr(cmd)
 
 		handleConnect(driver, connStr)
-		var err error
-		database, err = db.NewDatabase(driver)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		if err := database.Connect(driver, connStr); err != nil {
-			fmt.Println("Error connecting to the database:", err)
-			return
-		}
-
-		fmt.Println("Connected to the database successfully!")
 
 		StartInteractiveShell()
 	},
